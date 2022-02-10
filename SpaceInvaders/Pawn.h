@@ -29,11 +29,14 @@ class APawn
 	//Returns the collision boxes
 	std::vector<SDL_Rect>& GetColliders() {return colliders;};
 
+	//Returns the simple collision box
+	SDL_Rect GetSimpleCollider() {return simple_collider;};
+
 protected:
 
 	static const int DOT_VEL = 2;
 
-	int pawn_width = 40;
+	int pawn_width = 20;
 	int pawn_height = 20;
 
 
@@ -51,6 +54,9 @@ protected:
 
 	/**The player's colliders*/
 	std::vector<SDL_Rect> colliders;
+
+	/**The player's simple collider*/
+	SDL_Rect simple_collider;
 
 	/**The texture of the pawn*/
 	UTexture* pawn_texture;

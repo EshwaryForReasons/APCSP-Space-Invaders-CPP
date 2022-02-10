@@ -207,6 +207,11 @@ bool Main::CheckCollision(std::vector<SDL_Rect>& a, std::vector<SDL_Rect>& b)
 	return false;
 }
 
+bool Main::CheckSimpleCollision(const SDL_Rect* a, const SDL_Rect* b)
+{
+	return SDL_HasIntersection(a, b);
+}
+
 
 int WinMain(int argc, char* argv[])
 {
@@ -240,7 +245,7 @@ int WinMain(int argc, char* argv[])
 			APlayer player(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100, &Main::GetInstance()->player_texture);
 
 			//The collision test dot
-			APlayer ctp(SCREEN_WIDTH / 4, SCREEN_HEIGHT - 400, &Main::GetInstance()->player_texture);
+			APlayer ctp(SCREEN_WIDTH / 4, SCREEN_HEIGHT - 100, &Main::GetInstance()->player_texture);
 
 			while (!quit)
 			{

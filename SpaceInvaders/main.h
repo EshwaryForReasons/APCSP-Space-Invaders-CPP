@@ -86,6 +86,9 @@ public:
 	/**Box set collision detector*/
 	bool CheckCollision(std::vector<SDL_Rect>& a, std::vector<SDL_Rect>& b);
 
+	/**Box set collision detector*/
+	bool CheckSimpleCollision(const SDL_Rect *a, const SDL_Rect* b);
+
 
 	/**Starts up SDL and created window*/
 	bool InitializeSDL();

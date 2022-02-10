@@ -20,8 +20,8 @@ APawn::APawn(int x, int y, UTexture* _pawn_texture)
 	colliders.resize(11);
 
 	//Set collision box dimesions
-	/*colliders[0].w = pawn_width;
-	colliders[0].h = pawn_height;*/
+	simple_collider.w = pawn_width;
+	simple_collider.h = pawn_height;
 
 	colliders[0].w = 6;
 	colliders[0].h = 1;
