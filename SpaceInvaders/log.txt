@@ -8,4 +8,6 @@ Uanable to load image enemy_advanced_texture.png. SDL_image Error: Couldn't open
 Failed to load the advanced enemy texture.
 Uanable to load image enemy_bomber_texture.png. SDL_image Error: Couldn't open enemy_bomber_texture.png
 Failed to load the bomber enemy texture.
+Uanable to load image projectile_bullet_texture.png. SDL_image Error: Couldn't open projectile_bullet_texture.png
+Failed to load the bomber enemy texture.
 Failed to load media.

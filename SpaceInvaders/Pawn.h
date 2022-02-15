@@ -5,63 +5,44 @@
 #include <vector>
 
 #include "SDLUtilities/Texture.h"
+#include "SIObject.h"
 
-class APawn
+class APawn : public SIObject
 {
-	public:
+public:
 
 	APawn(int x, int y, UTexture* pawn_texture);
 
+	/**Called every frame*/
+	virtual void Tick();
+
+
+	/**Take damage*/
+	void TakeDamage();
+
+	/**The death logic*/
+	void Die();
+
+
 	/**The amount of lives the player has remaining*/
-	int lives_remainaing;
+	int lives_remaining;
+
+	/**Max lives*/
+	int max_lives;
+
+
+	/**True if bullet exists*/
+	bool bHasBullet;
 
 
 	/**Handlers user input*/
 	virtual void HandleInput(SDL_Event& input_event);
 
 	/**Moves the player and checks collision*/
-	void MovePlayer(std::vector<SDL_Rect>& other_colliders);
-
-	/**Renders the player on the screen*/
-	void Render();
-
-
-	//Returns the collision boxes
-	std::vector<SDL_Rect>& GetColliders() {return colliders;};
-
-	//Returns the simple collision box
-	SDL_Rect GetSimpleCollider() {return simple_collider;};
+	virtual void MovePlayer();
 
 protected:
 
-	static const int DOT_VEL = 2;
-
-	int pawn_width = 20;
-	int pawn_height = 20;
-
-
-	/**The X offset of the player*/
-	int x_position;
-
-	/**The Y offset of the player*/
-	int y_position;
-
-	/**The Y velocity of the player*/
-	int x_velocity;
-
-	/**The Y velocity of the player*/
-	int y_velocity;
-
-	/**The player's colliders*/
-	std::vector<SDL_Rect> colliders;
-
-	/**The player's simple collider*/
-	SDL_Rect simple_collider;
-
-	/**The texture of the pawn*/
-	UTexture* pawn_texture;
-
-	/**Moves the collision boxes relative to the dot's offset*/
-	void ShiftColliders();
+	static const int PAWN_VELOCITY = 2;
 };
 

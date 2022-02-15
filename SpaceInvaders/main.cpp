@@ -8,6 +8,9 @@
 
 #include "main.h"
 #include "player.h"
+#include "SIObject.h"
+#include "GameModes/MainGameMode.h"
+#include "Enemies/SIEnemyBasic.h"
 
 static Main* global_main = nullptr;
 
@@ -24,6 +27,8 @@ void InsertNewError(std::string Error)
 Main::Main()
 {
 	global_main = this;
+
+	global_entities = {};
 }
 
 Main::~Main()
@@ -37,7 +42,70 @@ Main* Main::GetInstance()
 }
 
 
-/**Starts up SDL and created window*/
+void Main::MainTick()
+{
+	bool quit = false;
+
+	//Create the main game mode
+	std::unique_ptr<UMainGameMode> main_game_mode = std::make_unique<UMainGameMode>();
+	main_game_mode->InitializeEnemies();
+
+	//Event handler
+	SDL_Event event;
+
+	//The player that will be moving around on the screen
+	std::shared_ptr<APlayer> player = std::make_shared<APlayer>(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100, &Main::GetInstance()->player_texture);
+
+	AddEntity(player);
+
+	int scrolling_offset = 0;
+
+	while (!quit)
+	{
+		//Handle events on queue
+		while (SDL_PollEvent(&event) != 0)
+		{
+			//User requests quit
+			if (event.type == SDL_QUIT)
+			{
+				quit = true;
+			}
+
+			//Handle input for the dot
+			player->HandleInput(event);
+		}
+
+		//Scrolling background
+		scrolling_offset++;
+
+		if (scrolling_offset > 1920)
+		{
+			scrolling_offset = 0;
+		}
+
+		//Clear screen
+		SDL_SetRenderDrawColor(Main::GetInstance()->global_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
+		SDL_RenderClear(Main::GetInstance()->global_renderer);
+
+		background_texture.Render(0, scrolling_offset);
+		background_texture.Render(0, scrolling_offset - background_texture.GetHeight());
+
+		for (std::shared_ptr<class SIObject> object : global_entities)
+		{
+			object->Tick();
+		}
+
+		for (std::shared_ptr<class SIObject> object : global_entities)
+		{
+			object->Render();
+		}
+
+		//Update screen
+		SDL_RenderPresent(Main::GetInstance()->global_renderer);
+	}
+}
+
+
 bool Main::InitializeSDL()
 {
 	bool success = true;
@@ -98,10 +166,25 @@ bool Main::InitializeSDL()
 	return success;
 }
 
-/**Loads media*/
 bool Main::LoadMedia()
 {
 	bool success = true;
+
+	//Load background
+	if (!background_texture.LoadFromFile("background_texture.png"))
+	{
+		SI_LOG("Failed to load the player texture.")
+
+		success = false;
+	}
+
+	//Load heart texture
+	if (!heart_texture.LoadFromFile("heart_texture.png"))
+	{
+		SI_LOG("Failed to load the player texture.")
+
+		success = false;
+	}
 
 	//Load player texture
 	if (!player_texture.LoadFromFile("player_texture.png"))
@@ -143,18 +226,28 @@ bool Main::LoadMedia()
 		success = false;
 	}
 
+	//Load projectile bullet texture
+	if (!projectile_bullet_texture.LoadFromFile("projectile_bullet_texture.png"))
+	{
+		SI_LOG("Failed to load the bomber enemy texture.")
+
+		success = false;
+	}
+
 	return success;
 }
 
-/**Frees media and shuts down SDL*/
 void Main::Close()
 {
 	//Free loaded images
+	background_texture.Free();
+	heart_texture.Free();
 	player_texture.Free();
 	enemy_basic_texture.Free();
 	enemy_intermediate_texture.Free();
 	enemy_advanced_texture.Free();
 	enemy_bomber_texture.Free();
+	projectile_bullet_texture.Free();
 
 	//Destroy window	
 	SDL_DestroyRenderer(global_renderer);
@@ -167,7 +260,18 @@ void Main::Close()
 	SDL_Quit();
 }
 
-/**Box set collision detector*/
+
+void Main::AddEntity(std::shared_ptr<class SIObject> object)
+{
+	global_entities.push_back(object);
+}
+
+void Main::RemoveEntity(std::shared_ptr<class SIObject> object)
+{
+	global_entities.erase(std::remove(global_entities.begin(), global_entities.end(), object), global_entities.end());
+}
+
+
 bool Main::CheckCollision(std::vector<SDL_Rect>& a, std::vector<SDL_Rect>& b)
 {
 	//The sides of the rectangles
@@ -212,6 +316,25 @@ bool Main::CheckSimpleCollision(const SDL_Rect* a, const SDL_Rect* b)
 	return SDL_HasIntersection(a, b);
 }
 
+SIObject* Main::CheckGlobalCollision(const SDL_Rect* a)
+{
+	SIObject* final = nullptr;
+
+	for (int i = 0; i < global_entities.size(); i++)
+	{
+		std::shared_ptr<class SIObject> other = global_entities[i];
+
+		if (a != other->GetSimpleCollider() && SDL_HasIntersection(a, other->GetSimpleCollider()))
+		{
+			final = other.get();
+
+			break;
+		}
+	}
+
+	return final;
+}
+
 
 int WinMain(int argc, char* argv[])
 {
@@ -236,46 +359,7 @@ int WinMain(int argc, char* argv[])
 		}
 		else
 		{
-			bool quit = false;
-
-			//Event handler
-			SDL_Event event;
-
-			//The player that will be moving around on the screen
-			APlayer player(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100, &Main::GetInstance()->player_texture);
-
-			//The collision test dot
-			APlayer ctp(SCREEN_WIDTH / 4, SCREEN_HEIGHT - 100, &Main::GetInstance()->player_texture);
-
-			while (!quit)
-			{
-				//Handle events on queue
-				while (SDL_PollEvent(&event) != 0)
-				{
-					//User requests quit
-					if (event.type == SDL_QUIT)
-					{
-						quit = true;
-					}
-
-					//Handle input for the dot
-					player.HandleInput(event);
-				}
-
-				//Move the dot and check collision
-				player.MovePlayer(ctp.GetColliders());
-
-				//Clear screen
-				SDL_SetRenderDrawColor(Main::GetInstance()->global_renderer, 0xFF, 0xFF, 0xFF, 0xFF);
-				SDL_RenderClear(Main::GetInstance()->global_renderer);
-
-				//Render dots
-				player.Render();
-				ctp.Render();
-
-				//Update screen
-				SDL_RenderPresent(Main::GetInstance()->global_renderer);
-			}
+			Main::GetInstance()->MainTick();
 		}
 	}
 

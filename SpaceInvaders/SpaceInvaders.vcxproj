@@ -144,15 +144,29 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="GameModes\MainGameMode.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Projectiles\ProjectileBullet.cpp" />
     <ClCompile Include="SDLUtilities\Texture.cpp" />
+    <ClCompile Include="Enemies\SIEnemyBasic.cpp" />
+    <ClCompile Include="Enemies\SIEnemyAdvanced.cpp" />
+    <ClCompile Include="Enemies\SIEnemyBomber.cpp" />
+    <ClCompile Include="Enemies\SIEnemyIntermediate.cpp" />
+    <ClCompile Include="SIObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h" />
+    <ClInclude Include="GameModes\MainGameMode.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Projectiles\ProjectileBullet.h" />
     <ClInclude Include="SDLUtilities\Texture.h" />
+    <ClInclude Include="Enemies\SIEnemyBasic.h" />
+    <ClInclude Include="Enemies\SIEnemyAdvanced.h" />
+    <ClInclude Include="Enemies\SIEnemyBomber.h" />
+    <ClInclude Include="Enemies\SIEnemyIntermediate.h" />
+    <ClInclude Include="SIObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

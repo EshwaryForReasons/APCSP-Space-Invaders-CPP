@@ -60,12 +60,22 @@ public:
 	static Main* GetInstance();
 
 
+	/**The ticker object for main, responsible for all game logic*/
+	void MainTick();
+
+
 	/**The SDL window we will be rendering to*/
 	SDL_Window* global_window;
 
 	/**The window renderer*/
 	SDL_Renderer* global_renderer;
 
+
+	/**The texture of the player*/
+	UTexture background_texture;
+
+	/**The texture of the player*/
+	UTexture heart_texture;
 
 	/**The texture of the player*/
 	UTexture player_texture;
@@ -82,12 +92,28 @@ public:
 	/**The texture of the player*/
 	UTexture enemy_bomber_texture;
 
+	/**The texture of the bullet*/
+	UTexture projectile_bullet_texture;
+
+
+	/**Returns list of all objects in the game*/
+	std::vector<std::shared_ptr<class SIObject>> GetGlobalEntities() {return global_entities;};
+
+	/**Adds an entity to the list*/
+	void AddEntity(std::shared_ptr<class SIObject> object);
+
+	/**Removes an entity from the list*/
+	void RemoveEntity(std::shared_ptr<class SIObject> object);
+
 
 	/**Box set collision detector*/
 	bool CheckCollision(std::vector<SDL_Rect>& a, std::vector<SDL_Rect>& b);
 
 	/**Box set collision detector*/
 	bool CheckSimpleCollision(const SDL_Rect *a, const SDL_Rect* b);
+
+	/**Checks whether the given rect intersects with any other in the world*/
+	class SIObject* CheckGlobalCollision(const SDL_Rect* a);
 
 
 	/**Starts up SDL and created window*/
@@ -97,5 +123,10 @@ public:
 	bool LoadMedia();
 
 	/**Frees media and shuts down SDL*/
-	void Close();	
+	void Close();
+
+private:
+
+	/**List of all objects in the game*/
+	std::vector<std::shared_ptr<class SIObject>> global_entities;
 };
