@@ -2,13 +2,15 @@
 
 #pragma once
 
+#include <memory>
+
 #include "SIObject.h"
 
 class AProjectileBullet : public SIObject
 {
 public:
 
-	AProjectileBullet(int x, int y, UTexture* object_texture, class APawn* owner);
+	AProjectileBullet(int x, int y, UTexture* object_texture, class SIObject* owner, int bullet_level);
 
 	/**Called every frame*/
 	virtual void Tick() override;
@@ -16,13 +18,16 @@ public:
 	void MoveProjectile();
 
 	/**Called when the projectile hits something*/
-	void OnHit();
+	virtual void OnHit(bool bOffScreen);
 
 protected:
 
 	/**The thing this projectile hit*/
-	class APawn* hit_item;
+	class SIObject* hit_item;
 
 	/**The pawn that owns this projectile*/
-	class APawn* owner;
+	class SIObject* owner;
+
+	/**The level of this bullet*/
+	int bullet_level;
 };

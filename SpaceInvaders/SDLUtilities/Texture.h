@@ -6,6 +6,13 @@
 
 #include <SDL.h>
 
+enum class EFontSize
+{
+	FS_TITLE,
+	FS_NORMAL,
+	FS_SMALL
+};
+
 class UTexture
 {
 public:
@@ -18,6 +25,9 @@ public:
 
 	/**Loads image at specified path*/
 	bool LoadFromFile(std::string path);
+
+	/**Creates image from font string*/
+	bool LoadFromRenderedText(std::string textureText, SDL_Color textColor, const EFontSize& font_size);
 
 	/**Deallocates texture*/
 	void Free();

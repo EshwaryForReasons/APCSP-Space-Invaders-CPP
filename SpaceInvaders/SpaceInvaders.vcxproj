@@ -116,14 +116,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>.;C:\Libraries\SDL2-2.0.20\include;C:\Libraries\SDL2_image-2.0.5\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;C:\Libraries\SDL2-2.0.20\include;C:\Libraries\SDL2_image-2.0.5\include;C:\Libraries\SDL2_ttf-2.0.18\include</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Libraries\SDL2-2.0.20\lib\x64;C:\Libraries\SDL2_image-2.0.5\lib\x64</AdditionalLibraryDirectories>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Libraries\SDL2-2.0.20\lib\x64;C:\Libraries\SDL2_image-2.0.5\lib\x64;C:\Libraries\SDL2_ttf-2.0.18\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,29 +143,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameModes\GameModeBase.cpp" />
+    <ClCompile Include="GameModes\GameOverGameMode.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="GameModes\MainGameMode.cpp" />
+    <ClCompile Include="GameModes\MainMenuGameMode.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Projectiles\ProjectileBulletEnemy.cpp" />
     <ClCompile Include="Projectiles\ProjectileBullet.cpp" />
     <ClCompile Include="SDLUtilities\Texture.cpp" />
     <ClCompile Include="Enemies\SIEnemyBasic.cpp" />
     <ClCompile Include="Enemies\SIEnemyAdvanced.cpp" />
     <ClCompile Include="Enemies\SIEnemyBomber.cpp" />
     <ClCompile Include="Enemies\SIEnemyIntermediate.cpp" />
+    <ClCompile Include="Enemies\SIEnemyBase.cpp" />
     <ClCompile Include="SIObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameModes\GameModeBase.h" />
+    <ClInclude Include="GameModes\GameOverGameMode.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="GameModes\MainGameMode.h" />
+    <ClInclude Include="GameModes\MainMenuGameMode.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Projectiles\ProjectileBulletEnemy.h" />
     <ClInclude Include="Projectiles\ProjectileBullet.h" />
     <ClInclude Include="SDLUtilities\Texture.h" />
     <ClInclude Include="Enemies\SIEnemyBasic.h" />
     <ClInclude Include="Enemies\SIEnemyAdvanced.h" />
     <ClInclude Include="Enemies\SIEnemyBomber.h" />
     <ClInclude Include="Enemies\SIEnemyIntermediate.h" />
+    <ClInclude Include="Enemies\SIEnemyBase.h" />
     <ClInclude Include="SIObject.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

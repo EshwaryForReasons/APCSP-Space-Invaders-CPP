@@ -2,15 +2,14 @@
 
 #pragma once
 
-#include "Pawn.h"
+#include "SIEnemyBase.h"
 
-class ASIEnemyBomber : public APawn
+class ASIEnemyBomber : public ASIEnemyBase
 {
 public:
 
 	ASIEnemyBomber(int x, int y, UTexture* pawn_texture);
 
-	/**Called every frame*/
-	virtual void Tick() override;
+	virtual void Attack() override;
 };
 

@@ -1,3 +1,7 @@
+Uanable to load image background_texture.png. SDL_image Error: Couldn't open background_texture.png
+Failed to load the player texture.
+Uanable to load image heart_texture.png. SDL_image Error: Couldn't open heart_texture.png
+Failed to load the player texture.
 Uanable to load image player_texture.png. SDL_image Error: Couldn't open player_texture.png
 Failed to load the player texture.
 Uanable to load image enemy_basic_texture.png. SDL_image Error: Couldn't open enemy_basic_texture.png
@@ -7,5 +11,7 @@ Failed to load the intermediate enemy texture.
 Uanable to load image enemy_advanced_texture.png. SDL_image Error: Couldn't open enemy_advanced_texture.png
 Failed to load the advanced enemy texture.
 Uanable to load image enemy_bomber_texture.png. SDL_image Error: Couldn't open enemy_bomber_texture.png
+Failed to load the bomber enemy texture.
+Uanable to load image projectile_bullet_texture.png. SDL_image Error: Couldn't open projectile_bullet_texture.png
 Failed to load the bomber enemy texture.
 Failed to load media.

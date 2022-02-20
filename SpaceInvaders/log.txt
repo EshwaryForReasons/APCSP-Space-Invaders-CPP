@@ -1,3 +1,9 @@
+Uanable to load image background_texture.png. SDL_image Error: Couldn't open background_texture.png
+Failed to load the player texture.
+Uanable to load image space_invaders_logo_texture.png. SDL_image Error: Couldn't open space_invaders_logo_texture.png
+Failed to load the space invaders logo texture.
+Uanable to load image heart_texture.png. SDL_image Error: Couldn't open heart_texture.png
+Failed to load the player texture.
 Uanable to load image player_texture.png. SDL_image Error: Couldn't open player_texture.png
 Failed to load the player texture.
 Uanable to load image enemy_basic_texture.png. SDL_image Error: Couldn't open enemy_basic_texture.png

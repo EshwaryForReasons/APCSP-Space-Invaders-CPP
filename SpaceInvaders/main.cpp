@@ -3,13 +3,15 @@
 #include <iostream>
 #include <string>
 
-#include <SDL.h>
 #include <SDL_image.h>
 
 #include "main.h"
-#include "player.h"
 #include "SIObject.h"
+#include "Player.h"
+#include "GameModes/GameModeBase.h"
+#include "GameModes/MainMenuGameMode.h"
 #include "GameModes/MainGameMode.h"
+#include "GameModes/GameOverGameMode.h"
 #include "Enemies/SIEnemyBasic.h"
 
 static Main* global_main = nullptr;
@@ -29,6 +31,10 @@ Main::Main()
 	global_main = this;
 
 	global_entities = {};
+
+	current_game_state = EGameState::GS_MainMenu;
+
+	quit = false;
 }
 
 Main::~Main()
@@ -44,21 +50,11 @@ Main* Main::GetInstance()
 
 void Main::MainTick()
 {
-	bool quit = false;
-
-	//Create the main game mode
-	std::unique_ptr<UMainGameMode> main_game_mode = std::make_unique<UMainGameMode>();
-	main_game_mode->InitializeEnemies();
-
-	//Event handler
-	SDL_Event event;
-
-	//The player that will be moving around on the screen
-	std::shared_ptr<APlayer> player = std::make_shared<APlayer>(SCREEN_WIDTH / 2, SCREEN_HEIGHT - 100, &Main::GetInstance()->player_texture);
-
-	AddEntity(player);
+	ChangeGameState(current_game_state);
 
 	int scrolling_offset = 0;
+
+	SDL_Event event;
 
 	while (!quit)
 	{
@@ -71,16 +67,18 @@ void Main::MainTick()
 				quit = true;
 			}
 
-			//Handle input for the dot
-			player->HandleInput(event);
+			current_game_mode->HandleInput(event);
 		}
 
-		//Scrolling background
-		scrolling_offset++;
-
-		if (scrolling_offset > 1920)
+		if (current_game_state == EGameState::GS_MainGame)
 		{
-			scrolling_offset = 0;
+			//Scrolling background
+			scrolling_offset++;
+
+			if (scrolling_offset > 1920)
+			{
+				scrolling_offset = 0;
+			}
 		}
 
 		//Clear screen
@@ -90,15 +88,8 @@ void Main::MainTick()
 		background_texture.Render(0, scrolling_offset);
 		background_texture.Render(0, scrolling_offset - background_texture.GetHeight());
 
-		for (std::shared_ptr<class SIObject> object : global_entities)
-		{
-			object->Tick();
-		}
-
-		for (std::shared_ptr<class SIObject> object : global_entities)
-		{
-			object->Render();
-		}
+		current_game_mode->Tick();
+		current_game_mode->RenderWorld();
 
 		//Update screen
 		SDL_RenderPresent(Main::GetInstance()->global_renderer);
@@ -111,7 +102,7 @@ bool Main::InitializeSDL()
 	bool success = true;
 
 	//Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO) < 0)
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) < 0)
 	{
 		SI_LOG("SDL could not initialize. SDL Error: " << SDL_GetError())
 
@@ -159,6 +150,13 @@ bool Main::InitializeSDL()
 
 					success = false;
 				}
+
+				if (TTF_Init() == -1)
+				{
+					SI_LOG("SDL_ttf could not initialize. SDL_ttf Error: " << TTF_GetError())
+
+					success = false;
+				}
 			}
 		}
 	}
@@ -170,10 +168,22 @@ bool Main::LoadMedia()
 {
 	bool success = true;
 
+	global_font_title = TTF_OpenFont("space_invaders.ttf", 28);
+	global_font_normal = TTF_OpenFont("space_invaders.ttf", 20);
+	global_font_small = TTF_OpenFont("space_invaders.ttf", 14);
+
 	//Load background
 	if (!background_texture.LoadFromFile("background_texture.png"))
 	{
 		SI_LOG("Failed to load the player texture.")
+
+		success = false;
+	}
+
+	//Load space invaders texture
+	if (!space_invaders_logo_texture.LoadFromFile("space_invaders_logo_texture.png"))
+	{
+		SI_LOG("Failed to load the space invaders logo texture.")
 
 		success = false;
 	}
@@ -261,12 +271,41 @@ void Main::Close()
 }
 
 
-void Main::AddEntity(std::shared_ptr<class SIObject> object)
+void Main::ChangeGameState(const EGameState& new_game_state)
+{
+	current_game_state = new_game_state;
+
+	if (current_game_mode)
+	{
+		current_game_mode->EndGame();
+	}
+
+	delete current_game_mode;
+	current_game_mode = nullptr;
+
+	switch (current_game_state)
+	{
+	case EGameState::GS_MainMenu:
+		current_game_mode = new UMainMenuGameMode();
+		break;
+	case EGameState::GS_MainGame:
+		current_game_mode = new UMainGameMode();
+		break;
+	case EGameState::GS_GameOver:
+		current_game_mode = new UGameOverGameMode();
+		break;
+	}
+
+	current_game_mode->BeginPlay();
+}
+
+
+void Main::AddEntity(class SIObject* object)
 {
 	global_entities.push_back(object);
 }
 
-void Main::RemoveEntity(std::shared_ptr<class SIObject> object)
+void Main::RemoveEntity(class SIObject* object)
 {
 	global_entities.erase(std::remove(global_entities.begin(), global_entities.end(), object), global_entities.end());
 }
@@ -322,11 +361,11 @@ SIObject* Main::CheckGlobalCollision(const SDL_Rect* a)
 
 	for (int i = 0; i < global_entities.size(); i++)
 	{
-		std::shared_ptr<class SIObject> other = global_entities[i];
+		class SIObject* other = global_entities[i];
 
 		if (a != other->GetSimpleCollider() && SDL_HasIntersection(a, other->GetSimpleCollider()))
 		{
-			final = other.get();
+			final = other;
 
 			break;
 		}

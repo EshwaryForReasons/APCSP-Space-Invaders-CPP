@@ -18,10 +18,10 @@ public:
 
 
 	/**Take damage*/
-	void TakeDamage();
+	virtual void TakeDamage() override;
 
 	/**The death logic*/
-	void Die();
+	virtual void Die() override;
 
 
 	/**The amount of lives the player has remaining*/
@@ -31,8 +31,8 @@ public:
 	int max_lives;
 
 
-	/**True if bullet exists*/
-	bool bHasBullet;
+	/**Are we dead*/
+	bool bIsDead;
 
 
 	/**Handlers user input*/

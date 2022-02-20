@@ -19,16 +19,24 @@ public:
 	/**Renders the object on the screen*/
 	void Render();
 
-protected:
+
+	/**Take damage*/
+	virtual void TakeDamage();
+
+	/**The death logic*/
+	virtual void Die();
 
 	int object_width = 20;
+
+	/**The Y offset of the object*/
+	int y_position;
+
+protected:
+
 	int object_height = 20;
 
 	/**The X offset of the object*/
 	int x_position;
-
-	/**The Y offset of the object*/
-	int y_position;
 
 	/**The Y velocity of the object*/
 	int x_velocity;

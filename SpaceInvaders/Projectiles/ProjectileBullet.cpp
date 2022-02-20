@@ -4,7 +4,7 @@
 #include "main.h"
 #include "Pawn.h"
 
-AProjectileBullet::AProjectileBullet(int x, int y, UTexture* _object_texture, APawn* _owner) : SIObject(x, y, _object_texture)
+AProjectileBullet::AProjectileBullet(int x, int y, UTexture* _object_texture, SIObject* _owner, int _bullet_level) : SIObject(x, y, _object_texture)
 {
 	object_width = 5;
 	object_height = 10;
@@ -16,13 +16,15 @@ AProjectileBullet::AProjectileBullet(int x, int y, UTexture* _object_texture, AP
 	y_velocity = -5;
 
 	owner = _owner;
+
+	bullet_level = _bullet_level;
 }
 
 void AProjectileBullet::Tick()
 {
 	SIObject::Tick();
 
-	hit_item = (APawn*)(Main::GetInstance()->CheckGlobalCollision(&simple_collider));
+	hit_item = Main::GetInstance()->CheckGlobalCollision(&simple_collider);
 
 	MoveProjectile();
 }
@@ -36,11 +38,9 @@ void AProjectileBullet::MoveProjectile()
 	//If the dot collided or went too far to the left or right
 	if ((x_position < 0) || (x_position + object_width > SCREEN_WIDTH) || (hit_item && hit_item != owner))
 	{
-		//Move back
-		x_position -= x_velocity;
-		simple_collider.x = x_position;
+		OnHit(x_position < 0 || x_position + object_width > SCREEN_WIDTH);
 
-		OnHit();
+		return;
 	}
 
 	//Move the dot up or down
@@ -50,29 +50,25 @@ void AProjectileBullet::MoveProjectile()
 	//If the dot collided or went too far up or down
 	if ((y_position < 0) || (y_position + object_height > SCREEN_HEIGHT) || (hit_item && hit_item != owner))
 	{
-		//Move back
-		y_position -= y_velocity;
-		simple_collider.y = y_position;
+		OnHit(y_position < 0 || y_position + object_height > SCREEN_HEIGHT);
 
-		OnHit();
+		return;
 	}
 }
 
 
-void AProjectileBullet::OnHit()
+void AProjectileBullet::OnHit(bool bOffScreen)
 {
 	if (hit_item && hit_item != owner)
 	{
-		hit_item->TakeDamage();
+		for (int i = 0; i <= bullet_level; i++)
+		{
+			hit_item->TakeDamage();
+		}
 	}
 
-	for (std::shared_ptr<SIObject> object : Main::GetInstance()->GetGlobalEntities())
+	if (bullet_level < 2 || bOffScreen)
 	{
-		if (object.get() == this)
-		{
-			owner->bHasBullet = false;
-
-			Main::GetInstance()->RemoveEntity(object);
-		}
+		Main::GetInstance()->RemoveEntity(this);
 	}
 }

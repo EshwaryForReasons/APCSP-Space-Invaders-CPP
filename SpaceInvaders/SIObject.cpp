@@ -29,3 +29,14 @@ void SIObject::Render()
 	//Show the dot
 	object_texture->Render(x_position, y_position);
 }
+
+
+void SIObject::TakeDamage()
+{
+	
+}
+
+void SIObject::Die()
+{
+	
+}

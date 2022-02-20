@@ -2,10 +2,7 @@
 
 #pragma once
 
-#include <vector>
-#include <map>
-#include <memory>
-
+#include "GameModeBase.h"
 #include "Pawn.h"
 
 enum class EEnemyType
@@ -16,24 +13,39 @@ enum class EEnemyType
 	ET_BOMBER
 };
 
-class UMainGameMode
+class UMainGameMode : public UGameModeBase
 {
 public:
 
 	UMainGameMode();
 
+	virtual void Tick() override;
+
+	virtual void BeginPlay() override;
+
+	virtual void EndGame() override;
+
+	virtual void HandleInput(SDL_Event& input_event) override;
+
+	virtual void RenderWorld() override;
+
 	void InitializeEnemies();
 
-	void StartGame();
-	void EndGame();
+	virtual void InternalMoveEnemies() override;
+	virtual void EnemyAttack() override;
 
-	int player_score;
-	int enemies_killed;
+	virtual void AddDeath(int amount_killed, ASIEnemyBase* dead_enemy) override;
 
-	int level;
-	int difficulty;
+protected:
 
+	/**List of enemies to spawn*/
 	std::map<int, EEnemyType> enemy_data;
 
-	std::vector<std::shared_ptr<APawn>> current_enemies;
+	/**Current enemies*/
+	std::vector<class ASIEnemyBase*> current_enemies;
+
+	SDL_TimerID enemy_move_timer;
+	SDL_TimerID enemy_attack_timer;
+
+	bool bMoveEnemiesLeft;
 };

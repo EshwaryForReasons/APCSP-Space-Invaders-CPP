@@ -9,6 +9,7 @@
 #include <vector>
 
 #include <SDL.h>
+#include <SDL_ttf.h>
 
 #include "SDLUtilities/Texture.h"
 
@@ -50,6 +51,13 @@ void InsertNewError(std::string Error);
 static const int SCREEN_WIDTH = 1000;
 static const int SCREEN_HEIGHT = 600;
 
+enum class EGameState
+{
+	GS_MainMenu,
+	GS_MainGame,
+	GS_GameOver
+};
+
 class Main
 {
 public:
@@ -70,9 +78,25 @@ public:
 	/**The window renderer*/
 	SDL_Renderer* global_renderer;
 
+	/**The font to use throughout the game*/
+	TTF_Font* global_font_title;
 
-	/**The texture of the player*/
+	/**The font to use throughout the game*/
+	TTF_Font* global_font_normal;
+
+	/**The font to use throughout the game*/
+	TTF_Font* global_font_small;
+
+
+	/**SDL event handler*/
+	SDL_Event event;
+
+
+	/**The texture of the background*/
 	UTexture background_texture;
+
+	/**The texture of the space invaders logo*/
+	UTexture space_invaders_logo_texture;
 
 	/**The texture of the player*/
 	UTexture heart_texture;
@@ -96,14 +120,30 @@ public:
 	UTexture projectile_bullet_texture;
 
 
+	/**The current game mode class*/
+	class UGameModeBase* current_game_mode;
+
+
+	/**List of all objects in the game*/
+	std::vector<class SIObject*> global_entities;
+
+
+	/**Should the game keep running*/
+	bool quit = false;
+
+
+	/**Changes the game mode*/
+	void ChangeGameState(const EGameState& new_game_state);
+
+
 	/**Returns list of all objects in the game*/
-	std::vector<std::shared_ptr<class SIObject>> GetGlobalEntities() {return global_entities;};
+	std::vector<class SIObject*> GetGlobalEntities() {return global_entities;};
 
 	/**Adds an entity to the list*/
-	void AddEntity(std::shared_ptr<class SIObject> object);
+	void AddEntity(class SIObject* object);
 
 	/**Removes an entity from the list*/
-	void RemoveEntity(std::shared_ptr<class SIObject> object);
+	void RemoveEntity(class SIObject* object);
 
 
 	/**Box set collision detector*/
@@ -127,6 +167,6 @@ public:
 
 private:
 
-	/**List of all objects in the game*/
-	std::vector<std::shared_ptr<class SIObject>> global_entities;
+	/**The current game state*/
+	EGameState current_game_state;
 };

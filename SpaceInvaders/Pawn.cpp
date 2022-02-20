@@ -15,8 +15,6 @@ APawn::APawn(int x, int y, UTexture* _pawn_texture) : SIObject(x, y, _pawn_textu
 
 	lives_remaining = 1;
 	max_lives = 1;
-
-	bHasBullet = false;
 }
 
 void APawn::Tick()
@@ -27,6 +25,8 @@ void APawn::Tick()
 
 void APawn::TakeDamage()
 {
+	SIObject::TakeDamage();
+
 	lives_remaining--;
 
 	if (lives_remaining <= 0)
@@ -37,13 +37,11 @@ void APawn::TakeDamage()
 
 void APawn::Die()
 {
-	for (std::shared_ptr<SIObject> object : Main::GetInstance()->GetGlobalEntities())
-	{
-		if (object.get() == this)
-		{
-			Main::GetInstance()->RemoveEntity(object);
-		}
-	}
+	SIObject::Die();
+
+	bIsDead = true;
+
+	Main::GetInstance()->RemoveEntity(this);
 }
 
 

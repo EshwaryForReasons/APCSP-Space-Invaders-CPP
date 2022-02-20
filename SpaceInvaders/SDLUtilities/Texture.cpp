@@ -2,6 +2,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
+#include <SDL_ttf.h>
 #include <iostream>
 
 #include "main.h"
@@ -60,6 +61,57 @@ bool UTexture::LoadFromFile(std::string path)
 
 	//Return success
 	main_texture = newTexture;
+	return main_texture != NULL;
+}
+
+bool UTexture::LoadFromRenderedText(std::string textureText, SDL_Color textColor, const EFontSize& font_size)
+{
+	//Get rid of preexisting texture
+	Free();
+
+	TTF_Font* font = nullptr;
+
+	switch (font_size)
+	{
+	case EFontSize::FS_TITLE:
+		font = Main::GetInstance()->global_font_title;
+		break;
+	case EFontSize::FS_NORMAL:
+		font = Main::GetInstance()->global_font_normal;
+		break;
+	case EFontSize::FS_SMALL:
+		font = Main::GetInstance()->global_font_small;
+		break;
+	}
+
+	//Render text surface
+	SDL_Surface* textSurface = TTF_RenderText_Solid(font, textureText.c_str(), textColor);
+
+	if (textSurface == NULL)
+	{
+		SI_LOG("Unable to render text surface: " << textureText.c_str() << ". SDL_ttf Error: " << TTF_GetError());
+	}
+	else
+	{
+		//Create texture from surface pixels
+		main_texture = SDL_CreateTextureFromSurface(Main::GetInstance()->global_renderer, textSurface);
+
+		if (main_texture == NULL)
+		{
+			SI_LOG("Uanable to create texture from rendered text: SDL Error: " << SDL_GetError());
+		}
+		else
+		{
+			//Get image dimensions
+			width = textSurface->w;
+			height = textSurface->h;
+		}
+
+		//Get rid of old surface
+		SDL_FreeSurface(textSurface);
+	}
+
+	//Return success
 	return main_texture != NULL;
 }
 
